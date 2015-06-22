@@ -30,7 +30,7 @@ public class MainActivity extends ActionBarActivity implements DownloadListener{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        DownloadManager.getInstance().init();
         DownloadManager.getInstance().addDownloadListener(this);
 
         initView();
@@ -45,6 +45,11 @@ public class MainActivity extends ActionBarActivity implements DownloadListener{
     private void initView() {
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
         progressBar.setMax(100);
+        DownLoadFile file = DownloadManager.getInstance().getDownloadFile(URL);
+        if (file != null) {
+            progressBar.setProgress(file.computeProgress());
+        }
+
         statusText = (TextView) findViewById(R.id.statusText);
         Button operateBtn = (Button) findViewById(R.id.operateBtn);
         operateBtn.setOnClickListener(new View.OnClickListener() {
@@ -52,8 +57,13 @@ public class MainActivity extends ActionBarActivity implements DownloadListener{
             public void onClick(View v) {
                 DownLoadFile file = DownloadManager.getInstance().getDownloadFile(URL);
                 if (file != null) {
-                    if (file.getState() != DownLoadFile.DOWNSTAT_FINISH) {
-                        DownloadManager.getInstance().downloadFile(MainActivity.this, file);
+                    if (file.getState() == DownLoadFile.DOWNSTAT_FINISH) {
+                        onDownloadSuccess(file);
+                    } else if (file.getState() == DownLoadFile.DOWNSTAT_DOWNLOAD
+                            || file.getState() == DownLoadFile.DOWNSTAT_WAIT) {
+                        DownloadManager.getInstance().pauseTask(file);
+                    } else {
+                        DownloadManager.getInstance().resumeTask(file);
                     }
                 } else {
                     DownloadManager.getInstance().downloadFile(MainActivity.this, URL);

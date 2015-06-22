@@ -1,9 +1,11 @@
 package com.szuwest.download;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
+import android.widget.Toast;
 
 import com.szuwest.download.constant.DownloadConfig;
 import com.szuwest.download.domain.DownLoadFile;
@@ -124,18 +126,20 @@ public class DownloadManager {
     // 返回一个DownLoadFile从而可以直接观察下载状态
     public DownLoadFile newDownload(Context context, String url) {
         if (!DeviceHelper.isSDCardExist()) {
-//            if (context instanceof Activity) {
+            if (context instanceof Activity) {
 //                Toast.makeText(context, R.string.sdcard_no, Toast.LENGTH_SHORT).show();
-//            }
+                Toast.makeText(context, "NO SDCard!", Toast.LENGTH_SHORT).show();
+            }
             XLLog.d(TAG, "no sdcard");
             return null;
         }
 
         DownLoadFile task = getDownloadFile(url);
         if (task != null) {
-//            if (context instanceof Activity) {
+            if (context instanceof Activity) {
 //                Toast.makeText(context, R.string.download_task_exist, Toast.LENGTH_SHORT).show();
-//            }
+                Toast.makeText(context, "Task exist!", Toast.LENGTH_SHORT).show();
+            }
             return null;
         }
 
@@ -159,17 +163,19 @@ public class DownloadManager {
 
     public boolean downloadFile(Context context, final DownLoadFile downLoadFile) {
         if (!DeviceHelper.isSDCardExist()) {
-//            if (context instanceof Activity) {
+            if (context instanceof Activity) {
 //                Toast.makeText(context, R.string.sdcard_no, Toast.LENGTH_SHORT).show();
-//            }
+                Toast.makeText(context, "NO SDCard!", Toast.LENGTH_SHORT).show();
+            }
             XLLog.d(TAG, "no sdcard");
             return false;
         }
         DownLoadFile task = getDownloadFile(downLoadFile.getFileUrl());
         if (task != null) {
-//            if (context instanceof Activity) {
+            if (context instanceof Activity) {
 //                Toast.makeText(context, R.string.download_task_exist, Toast.LENGTH_SHORT).show();
-//            }
+                Toast.makeText(context, "Task exist!", Toast.LENGTH_SHORT).show();
+            }
             return false;
         }
         downLoadFile.setState(DownLoadFile.DOWNSTAT_WAIT);
